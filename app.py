@@ -5,179 +5,235 @@ import matplotlib.pyplot as plt
 from datetime import date
 
 # =========================================================
-# Page Config (MUST be first Streamlit call)
+# Page Config
 # =========================================================
-st.set_page_config(
-    page_title="SpecCheck",
-    layout="wide"
-)
+st.set_page_config(page_title="SpecCheck", layout="wide")
 
 # =========================================================
-# Sensor Configuration (Domain Truth)
+# Configurations
 # =========================================================
 SENSOR_CONFIG = {
     "Thermocouple": {
         "units": ["°C"],
         "range": (0, 1200),
-        "tolerance": (-2, 2),      # ± °C
+        "tolerance": (-2, 2),
         "needs_ambient": True
     },
     "RTD": {
         "units": ["°C"],
         "range": (-50, 600),
-        "tolerance": (-0.5, 0.5),  # ± °C
+        "tolerance": (-0.5, 0.5),
         "needs_ambient": True
     },
     "Pressure Sensor": {
         "units": ["bar", "Pa"],
         "range": (0, 300),
-        "tolerance": (-2, 2),      # ± %
+        "tolerance": (-2, 2),
         "needs_ambient": False
     },
     "Flow Sensor": {
         "units": ["kg/s"],
         "range": (0, 50),
-        "tolerance": (-5, 5),      # ± %
+        "tolerance": (-5, 5),
         "needs_ambient": False
+    }
+}
+
+ENGINE_CONFIG = {
+    "Single Cylinder Test Rig": {
+        "max_temp_rate": 5,
+        "max_pressure_rate": 10
+    },
+    "Multi Cylinder Engine": {
+        "max_temp_rate": 10,
+        "max_pressure_rate": 20
+    },
+    "Electric Motor Test Bench": {
+        "max_temp_rate": 3,
+        "max_pressure_rate": None
     }
 }
 
 # =========================================================
 # Title
 # =========================================================
-st.title("SpecCheck")
-st.caption("Instrumentation Data Validation & Analysis")
+st.markdown(
+    "<h1 style='color:#1f77b4;'>SpecCheck</h1>",
+    unsafe_allow_html=True
+)
+st.caption("Instrumentation Data Validation & Baseline Comparison")
 
 # =========================================================
 # Sidebar: Context
 # =========================================================
 st.sidebar.header("Test Context")
 
-sensor_type = st.sidebar.selectbox(
-    "Sensor Type",
-    list(SENSOR_CONFIG.keys())
-)
+sensor_type = st.sidebar.selectbox("Sensor Type", SENSOR_CONFIG.keys())
+engine_type = st.sidebar.selectbox("Engine / Test Bench Type", ENGINE_CONFIG.keys())
 
 sensor_config = SENSOR_CONFIG[sensor_type]
+engine_config = ENGINE_CONFIG[engine_type]
 
-unit = st.sidebar.selectbox(
-    "Unit",
-    sensor_config["units"]
-)
+unit = st.sidebar.selectbox("Unit", sensor_config["units"])
 
 calibration_date = st.sidebar.date_input(
-    "Last Calibration Date",
-    value=date.today()
+    "Last Calibration Date", value=date.today()
 )
 
 test_condition = st.sidebar.selectbox(
-    "Test Condition",
-    ["Steady State", "Transient", "Startup"]
+    "Test Condition", ["Steady State", "Transient", "Startup"]
 )
 
-ambient_temp = None
 if sensor_config["needs_ambient"]:
-    ambient_temp = st.sidebar.number_input(
-        "Ambient Temperature (°C)",
-        value=25.0
+    st.sidebar.number_input("Ambient Temperature (°C)", value=25.0)
+
+# =========================================================
+# Data Upload Section
+# =========================================================
+st.header("1. Upload Data")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    current_file = st.file_uploader(
+        "Upload CURRENT Measurement Data (CSV)",
+        type=["csv"],
+        key="current"
+    )
+
+with col2:
+    baseline_file = st.file_uploader(
+        "Upload BASELINE / STANDARD Data (CSV)",
+        type=["csv"],
+        key="baseline"
     )
 
 # =========================================================
-# Main: Data Upload
+# If both files uploaded, show previews and button
 # =========================================================
-st.header("1. Upload Measurement Data")
+if current_file and baseline_file:
 
-uploaded_file = st.file_uploader(
-    "Upload CSV file (must contain 'time' and 'value' columns)",
-    type=["csv"]
-)
+    current = pd.read_csv(current_file)
+    baseline = pd.read_csv(baseline_file)
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+    for df in [current, baseline]:
+        if "time" not in df.columns or "value" not in df.columns:
+            st.error("Both CSV files must contain 'time' and 'value' columns.")
+            st.stop()
 
-    st.subheader("Raw Data Preview")
-    st.dataframe(data.head())
+    current = current.sort_values("time").dropna()
+    baseline = baseline.sort_values("time").dropna()
 
-    # -----------------------------------------------------
-    # Sanity Checks
-    # -----------------------------------------------------
-    if "time" not in data.columns or "value" not in data.columns:
-        st.error("CSV must contain 'time' and 'value' columns.")
-        st.stop()
+    st.subheader("Current Data Preview")
+    st.dataframe(current.head(), use_container_width=True)
 
-    data = data.dropna(subset=["time", "value"])
+    st.subheader("Baseline Data Preview")
+    st.dataframe(baseline.head(), use_container_width=True)
 
     # =====================================================
-    # Validation
+    # FINAL ACTION BUTTON (where you wanted it)
     # =====================================================
-    st.header("2. Run Validation")
+    st.markdown("---")
+    st.subheader("2. Generate Results")
 
-    if st.button("Validate Data"):
-        min_limit, max_limit = sensor_config["range"]
+    get_results = st.button("🚀 GET RESULTS", type="primary")
+
+    # =====================================================
+    # Processing (ONLY after button click)
+    # =====================================================
+    if get_results:
+
+        # Align baseline to current time axis
+        current["baseline_value"] = np.interp(
+            current["time"],
+            baseline["time"],
+            baseline["value"]
+        )
+
         tol_low, tol_high = sensor_config["tolerance"]
+        min_range, max_range = sensor_config["range"]
 
-        # Expected value (simple baseline)
-        expected_value = data["value"].mean()
-
-        tolerance_low = expected_value + tol_low
-        tolerance_high = expected_value + tol_high
+        current["lower_limit"] = current["baseline_value"] + tol_low
+        current["upper_limit"] = current["baseline_value"] + tol_high
 
         # ---------------- Range Check ----------------
-        data["range_valid"] = data["value"].between(
-            min_limit,
-            max_limit
+        current["range_valid"] = current["value"].between(
+            min_range, max_range
         )
 
-        # ---------------- Tolerance Check ----------------
-        data["tolerance_valid"] = data["value"].between(
-            tolerance_low,
-            tolerance_high
+        # ---------------- Baseline Tolerance Check ----------------
+        current["tolerance_valid"] = current["value"].between(
+            current["lower_limit"],
+            current["upper_limit"]
         )
+
+        # ---------------- Rate of Change ----------------
+        current["roc"] = current["value"].diff() / current["time"].diff()
+
+        max_rate = None
+        if sensor_type in ["Thermocouple", "RTD"]:
+            max_rate = engine_config["max_temp_rate"]
+        elif sensor_type == "Pressure Sensor":
+            max_rate = engine_config["max_pressure_rate"]
+
+        current["roc_valid"] = (
+            True if max_rate is None else current["roc"].abs() <= max_rate
+        )
+
+        # ---------------- Calibration Check ----------------
+        days_since_cal = (date.today() - calibration_date).days
+        calibration_valid = days_since_cal <= 180
 
         # ---------------- Final Status ----------------
-        data["status"] = np.where(
-            data["range_valid"] & data["tolerance_valid"],
-            "PASS",
-            "FAIL"
-        )
+        def status(row):
+            if not row["range_valid"]:
+                return "FAIL"
+            if not row["tolerance_valid"]:
+                return "FAIL"
+            if not row["roc_valid"]:
+                return "WARNING"
+            return "PASS"
 
-        # ---------------- Verdict ----------------
-        if data["status"].eq("FAIL").any():
-            st.error("❌ Validation Failed")
+        current["status"] = current.apply(status, axis=1)
+
+        # =================================================
+        # Verdict
+        # =================================================
+        if "FAIL" in current["status"].values:
+            st.error("❌ VALIDATION FAILED")
+        elif "WARNING" in current["status"].values:
+            st.warning("⚠️ VALIDATION COMPLETED WITH WARNINGS")
         else:
-            st.success("✅ Validation Passed")
+            st.success("✅ VALIDATION PASSED")
 
-        # ---------------- Active Rules ----------------
-        st.info(
-            f"""
-            **Active Validation Rules**
-            - Sensor Type: {sensor_type}
-            - Valid Range: {min_limit} to {max_limit} {unit}
-            - Tolerance Band: {tolerance_low:.2f} to {tolerance_high:.2f} {unit}
-            """
-        )
+        if not calibration_valid:
+            st.warning(f"⚠️ Calibration expired ({days_since_cal} days old)")
 
         # =================================================
         # Visualization
         # =================================================
-        st.header("3. Visualization")
+        st.header("3. Time-Series Comparison")
 
-        fig, ax = plt.subplots(figsize=(10, 4))
+        fig, ax = plt.subplots(figsize=(11, 4))
 
         ax.plot(
-            data["time"],
-            data["value"],
-            label="Measured Value",
+            current["time"],
+            current["value"],
+            label="Current Measurement",
             linewidth=1.5
         )
 
-        ax.axhline(min_limit, color="red", linestyle="--", alpha=0.6)
-        ax.axhline(max_limit, color="red", linestyle="--", alpha=0.6)
+        ax.plot(
+            current["time"],
+            current["baseline_value"],
+            label="Baseline / Standard",
+            linestyle="--"
+        )
 
-        ax.axhspan(
-            tolerance_low,
-            tolerance_high,
-            color="green",
+        ax.fill_between(
+            current["time"],
+            current["lower_limit"],
+            current["upper_limit"],
             alpha=0.2,
             label="Tolerance Band"
         )
@@ -191,18 +247,18 @@ if uploaded_file is not None:
         # =================================================
         # Detailed Results
         # =================================================
-        st.header("4. Validation Details")
+        st.header("4. Validation Results")
+
+        def highlight(row):
+            if row["status"] == "FAIL":
+                return ["background-color:#ffcccc"] * len(row)
+            if row["status"] == "WARNING":
+                return ["background-color:#fff2cc"] * len(row)
+            return [""] * len(row)
 
         st.dataframe(
-            data[["time", "value", "status"]],
+            current[
+                ["time", "value", "baseline_value", "status"]
+            ].style.apply(highlight, axis=1),
             use_container_width=True
         )
-
-        failed_points = data[data["status"] == "FAIL"]
-
-        if not failed_points.empty:
-            st.warning("Failed Data Points")
-            st.dataframe(
-                failed_points,
-                use_container_width=True
-            )
