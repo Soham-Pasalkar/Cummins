@@ -68,11 +68,11 @@ st.caption("Instrumentation Data Validation & Baseline Comparison")
 # =========================================================
 st.sidebar.header("Test Context")
 
+engine_type = st.sidebar.selectbox("Engine Type", ENGINE_CONFIG.keys())
 sensor_type = st.sidebar.selectbox("Sensor Type", SENSOR_CONFIG.keys())
-engine_type = st.sidebar.selectbox("Engine / Test Bench Type", ENGINE_CONFIG.keys())
 
-sensor_config = SENSOR_CONFIG[sensor_type]
 engine_config = ENGINE_CONFIG[engine_type]
+sensor_config = SENSOR_CONFIG[sensor_type]
 
 unit = st.sidebar.selectbox("Unit", sensor_config["units"])
 
