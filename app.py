@@ -39,8 +39,8 @@ st.caption("Instrumentation Data Validation & Baseline Comparison")
 st.sidebar.header("Test Context")
 
 engine_type = st.sidebar.selectbox("Engine Type", ENGINE_CONFIG.keys())
+test_type = st.sidebar.selectbox("Type of Test", ["Steady", "Transient"])
 sensor_type = st.sidebar.selectbox("Sensor Type", SENSOR_CONFIG.keys())
-test_type = st.sidebar.selectbox("Type of Test", ["Normal", "Transient"])
 
 engine_config = ENGINE_CONFIG[engine_type]
 sensor_config = SENSOR_CONFIG[sensor_type]

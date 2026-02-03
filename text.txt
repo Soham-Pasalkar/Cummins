@@ -1,3 +1,5 @@
 convert txt file to csv
 clean the csv data(remove rows of 0 and start from 1)
 make a visualization(maxdata currentdata mindata)
+
+transient cycle frequency 1 5 10
