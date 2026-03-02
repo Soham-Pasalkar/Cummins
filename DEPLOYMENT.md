@@ -1,19 +1,5 @@
 # PUMA Analytics Pro - Deployment Guide
 
-## 🎯 You Have Two Versions
-
-### Version 1: `puma_analyzer_pro.py` (Original Enhanced)
-- Full-featured with sample data generation
-- Best for: Demonstrations, testing, learning the platform
-- Includes: Multi-cycle analysis, extensive documentation
-
-### Version 2: `puma_analytics_optimized.py` ⭐ **RECOMMENDED**
-- **Optimized for your actual PUMA data format**
-- Tested with your 24-column test.xlsx file
-- Better performance with real data
-- Enhanced error handling
-- Production-ready features
-
 ## 🚀 Quick Deployment (5 Minutes)
 
 ### Step 1: Install Python Dependencies
@@ -30,7 +16,7 @@ pip install -r requirements.txt
 ### Step 2: Launch the Application
 
 ```bash
-streamlit run puma_analytics_optimized.py
+streamlit run 00_puma_analytics.py
 ```
 
 The app will automatically open at: **http://localhost:8501**
@@ -120,7 +106,7 @@ NOx: 0-2000 ppm, MinDuration: 10s
 ```
 your_project/
 │
-├── puma_analytics_optimized.py    ← Main application (USE THIS)
+├── 00_puma_analytics.py    ← Main application (USE THIS)
 ├── requirements.txt                ← Python dependencies
 │
 ├── test.xlsx                       ← Your test data
