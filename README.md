@@ -54,7 +54,7 @@ pip install streamlit pandas numpy plotly openpyxl
 
 3. **Run the application**
 ```bash
-streamlit run puma_analyzer_pro.py
+streamlit run 00_puma_analytics.py
 ```
 
 The application will open in your default web browser at `http://localhost:8501`
