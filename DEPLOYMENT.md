@@ -1,5 +1,3 @@
-# PUMA Analytics Pro - Deployment Guide
-
 ## 🚀 Quick Deployment (5 Minutes)
 
 ### Step 1: Install Python Dependencies
@@ -114,18 +112,14 @@ your_project/
 │
 ├── README.md                       ← Full documentation
 ├── QUICKSTART.md                   ← Quick start guide
-│
-└── (optional files)
-    ├── puma_analyzer_pro.py       ← Original version
-    ├── generate_sample_data.py    ← Sample data generator
-    └── sample_config.csv          ← Sample configuration
+
 ```
 
 ## 🎯 First Test Run
 
 1. **Launch the app:**
    ```bash
-   streamlit run puma_analytics_optimized.py
+   streamlit run 00_puma_analytics.py
    ```
 
 2. **Upload files:**
@@ -184,7 +178,7 @@ def _categorize_parameter(self, param_name: str) -> str:
 Run on a server accessible by your team:
 
 ```bash
-streamlit run puma_analytics_optimized.py --server.port 8501 --server.address 0.0.0.0
+streamlit run 00_puma_analytics.py --server.port 8501 --server.address 0.0.0.0
 ```
 
 Access from any computer: `http://<server-ip>:8501`
@@ -308,7 +302,7 @@ The app is **already optimized** for your use case:
 
 ### Week 4: Presentation
 - ✅ Prepare demo with real data
-- ✅ Create user guide
+- ✅ Create user guide 
 - ✅ Present to stakeholders
 - ✅ Gather feedback for v3.0
 
@@ -353,11 +347,11 @@ The app is **already optimized** for your use case:
 
 ## ✅ Pre-Deployment Checklist
 
-- [ ] Python 3.8+ installed
-- [ ] Dependencies installed (`pip install -r requirements.txt`)
+- [✅ ] Python 3.8+ installed
+- [✅ ] Dependencies installed (`pip install -r requirements.txt`)
 - [ ] Test data ready (`test.xlsx`)
-- [ ] Configuration ready (`config_for_test_data.xlsx`)
-- [ ] App launches successfully
+- [✅ ] Configuration ready (`config_for_test_data.xlsx`)
+- [✅ ] App launches successfully
 - [ ] Can upload and process data
 - [ ] Results display correctly
 - [ ] Export functions work
@@ -373,13 +367,11 @@ Everything is set up for you:
 
 **Just run:**
 ```bash
-streamlit run puma_analytics_optimized.py
+streamlit run 00_puma_analytics.py
 ```
 
 **And you're live!** 🚀
 
 ---
-
-**Good luck with your Cummins internship!** 🔧
-
-*Built with care for production-grade PUMA data analysis*
+AO57M
+rohit@123

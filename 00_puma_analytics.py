@@ -565,7 +565,7 @@ def run_validation_cached(test_bytes, test_filename, config_bytes, config_filena
 col_header1, col_header2 = st.columns([3, 1])
 
 with col_header1:
-    st.title("PUMA Analytics Pro")
+    st.title("PUMA Analytics")
     st.caption("Cummins Test Data Validation & Analysis Platform")
 
 with col_header2:
@@ -675,39 +675,22 @@ if st.session_state.validated and st.session_state.summary_df is not None:
 
 if not st.session_state.validated:
     st.markdown("""
-    <div class='info-panel'>
-        <h3 style='margin-top: 0; color: #0d1b40 !important; -webkit-text-fill-color: #0d1b40 !important;'>📊 Welcome to PUMA Analytics Pro</h3>
-        <p><strong>Production-grade platform</strong> for analyzing PUMA test data with 600–1500+ sensor columns.</p>
-        
-        <h4 style='color: #1a3a8f !important; -webkit-text-fill-color: #1a3a8f !important;'>🎯 Key Features:</h4>
-        <ul>
-            <li>✅ <strong>Large-Scale Processing:</strong> Handle 600–1800 sensor columns efficiently</li>
-            <li>✅ <strong>Intelligent Validation:</strong> Threshold, ROC, and duration-based rules</li>
-            <li>✅ <strong>Auto-Detection:</strong> Automatically identifies test type and frequency</li>
-            <li>✅ <strong>Smart Categorization:</strong> Groups sensors by type (Temp, Pressure, Emissions, etc.)</li>
-            <li>✅ <strong>Baseline Comparison:</strong> Compare tests against reference data</li>
-            <li>✅ <strong>Interactive Viz:</strong> Charts, heatmaps, and time series</li>
-            <li>✅ <strong>Multi-Format Export:</strong> JSON, CSV, Excel reports</li>
-        </ul>
-        
-        <h4 style='color: #1a3a8f !important; -webkit-text-fill-color: #1a3a8f !important;'>📂 Supported File Formats:</h4>
-        <ul>
-            <li>📊 <strong>Excel:</strong> .xlsx, .xls</li>
-            <li>📄 <strong>CSV:</strong> .csv (comma, tab, semicolon, or pipe delimited)</li>
-            <li>📃 <strong>Text:</strong> .txt (CSV-formatted with any common delimiter)</li>
-        </ul>
+<div class='info-panel'>
+<h3 style='margin-top: 0; color: #0d1b40 !important;'>📊 Welcome to PUMA Analytics Pro</h3>
+<p><strong>Production-grade platform</strong> for analyzing PUMA test data with 600–1500+ sensor columns.</p>
 
-        <h4 style='color: #1a3a8f !important; -webkit-text-fill-color: #1a3a8f !important;'>🚀 Getting Started:</h4>
-        <ol>
-            <li>Upload your <strong>Test Data</strong> file (Excel, CSV, or TXT)</li>
-            <li>Upload <strong>Configuration</strong> file with validation rules</li>
-            <li>(Optional) Upload <strong>Baseline</strong> for comparison</li>
-            <li>Click <strong>"🚀 Run Analysis"</strong></li>
-        </ol>
-        
-        <p style='margin-bottom: 0; color: #4a5578;'><em>💡 Tip: If you don't have a config file, the system can auto-generate one from your test data!</em></p>
-    </div>
-    """, unsafe_allow_html=True)
+<h4 style='color: #1a3a8f !important;'>🎯 Key Features:</h4>
+<ul>
+<li>✅ <strong>Large-Scale Processing:</strong> Handle 600–1800 sensor columns efficiently</li>
+<li>✅ <strong>Intelligent Validation:</strong> Threshold, ROC, and duration-based rules</li>
+<li>✅ <strong>Auto-Detection:</strong> Automatically identifies test type and frequency</li>
+<li>✅ <strong>Smart Categorization:</strong> Groups sensors by type</li>
+<li>✅ <strong>Baseline Comparison:</strong> Compare tests against reference data</li>
+<li>✅ <strong>Interactive Viz:</strong> Charts, heatmaps, and time series</li>
+<li>✅ <strong>Multi-Format Export:</strong> JSON, CSV, Excel reports</li>
+</ul>
+</div>
+""", unsafe_allow_html=True)
 
 # ==========================================================
 # RUN VALIDATION
@@ -1210,7 +1193,9 @@ if st.session_state.validated and st.session_state.summary_df is not None:
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 <div style='text-align: center; color: #8899bb; padding: 20px; border-top: 1px solid #dce3f0;'>
-    <p style='margin: 0; color: #4a5578;'>PUMA Analytics Pro v2.0 | Built for Cummins Engineering</p>
+    <p style='margin: 0; color: #4a5578;'>PUMA Analytics v2.0 | Built for Cummins Engineering</p>
     <p style='margin: 4px 0 0 0; font-size: 12px; color: #8899bb;'>Production-Grade Test Data Analysis Platform</p>
 </div>
 """, unsafe_allow_html=True)
+
+

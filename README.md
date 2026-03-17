@@ -281,12 +281,12 @@ def custom_rule(values, params):
 
 ### Local Deployment
 ```bash
-streamlit run puma_analyzer_pro.py
+streamlit run 00_puma_analytics.py
 ```
 
 ### Network Deployment
 ```bash
-streamlit run puma_analyzer_pro.py --server.port 8501 --server.address 0.0.0.0
+streamlit run 00_puma_analytics.py --server.port 8501 --server.address 0.0.0.0
 ```
 Access from network: `http://<your-ip>:8501`
 
