@@ -9,4 +9,9 @@ app_path = os.path.join(base_path, "app.py")
 print("Running from:", base_path)
 print("App path:", app_path)
 
-subprocess.run([sys.executable, "-m", "streamlit", "run", app_path])
+subprocess.run([
+    sys.executable,
+    "-m", "streamlit",
+    "run", app_path,
+    "--server.headless=false"
+])
