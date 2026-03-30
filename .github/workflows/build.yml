@@ -24,9 +24,7 @@ jobs:
 
     - name: Build EXE
       run: |
-        pyinstaller --onefile ^
-        --add-data "cummins-logo-png-transparent.png;." ^
-        launcher.py
+        pyinstaller --onefile --add-data "cummins-logo-png-transparent.png;." launcher.py
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
