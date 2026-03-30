@@ -598,7 +598,7 @@ if logo_path.exists():
 else:
     st.sidebar.markdown("""
     <div style='text-align: center; padding: 24px 20px; background: #1a3a8f; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.15);'>
-        <div style='font-size: 42px; margin-bottom: 8px;'>⚙️</div>
+        <div style='font-size: 42px; margin-bottom: 8px;'>⚙️</div> 
         <h2 style='color: #ffffff; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 2px; -webkit-text-fill-color: #ffffff !important;'>CUMMINS</h2>
         <div style='height: 2px; width: 60px; background: rgba(255,255,255,0.4); margin: 12px auto;'></div>
         <p style='color: #c8d6f5; margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 1px;'>PUMA ANALYTICS PRO</p>
