@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -24,10 +24,16 @@ jobs:
 
     - name: Build EXE
       run: |
-        pyinstaller --onefile --add-data "app.py;." --add-data "cummins-logo-png-transparent.png;." launcher.py
+        pyinstaller ^
+          --onefile ^
+          --windowed ^                         # no console window
+          --name "PumaApp" ^
+          --add-data "app.py;." ^
+          --add-data "cummins-logo-png-transparent.png;." ^
+          launcher.py
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
         name: puma-exe
-        path: dist/
+        path: dist/PumaApp.exe
