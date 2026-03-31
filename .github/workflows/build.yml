@@ -3,37 +3,89 @@ name: Build Windows EXE
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:   # allows manual trigger from GitHub Actions tab
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-    - name: Build EXE
-      run: |
-        pyinstaller ^
-          --onefile ^
-          --windowed ^                         # no console window
-          --name "PumaApp" ^
-          --add-data "app.py;." ^
-          --add-data "cummins-logo-png-transparent.png;." ^
-          launcher.py
+      - name: Build EXE
+        run: |
+          pyinstaller --noconfirm --clean `
+            --onedir `
+            --windowed `
+            --name "PUMA_Analytics_Pro" `
+            --add-data "app.py;." `
+            --add-data "cummins-logo-png-transparent.png;." `
+            --add-data "Config;Config" `
+            --collect-data streamlit `
+            --collect-data altair `
+            --collect-data plotly `
+            --hidden-import streamlit `
+            --hidden-import streamlit.web.cli `
+            --hidden-import streamlit.runtime `
+            --hidden-import streamlit.runtime.scriptrunner `
+            --hidden-import pandas `
+            --hidden-import numpy `
+            --hidden-import scipy `
+            --hidden-import scipy.stats `
+            --hidden-import scipy.signal `
+            --hidden-import plotly `
+            --hidden-import plotly.graph_objects `
+            --hidden-import plotly.express `
+            --hidden-import plotly.subplots `
+            --hidden-import openpyxl `
+            --hidden-import xlrd `
+            --hidden-import reportlab `
+            --hidden-import reportlab.lib.pagesizes `
+            --hidden-import reportlab.platypus `
+            --hidden-import reportlab.lib.styles `
+            --hidden-import reportlab.lib.units `
+            --hidden-import reportlab.lib.colors `
+            --hidden-import reportlab.lib.enums `
+            --hidden-import altair `
+            --hidden-import pyarrow `
+            --hidden-import jinja2 `
+            --hidden-import click `
+            --hidden-import toml `
+            --hidden-import validators `
+            --hidden-import packaging `
+            --hidden-import attr `
+            --hidden-import attrs `
+            --hidden-import jsonschema `
+            --hidden-import tornado `
+            --hidden-import watchdog `
+            --hidden-import pydeck `
+            --hidden-import pytz `
+            --hidden-import tzlocal `
+            launcher.py
 
-    - name: Upload EXE
-      uses: actions/upload-artifact@v4
-      with:
-        name: puma-exe
-        path: dist/PumaApp.exe
+      - name: Copy config files into dist folder
+        run: |
+          Copy-Item "Config\*" "dist\PUMA_Analytics_Pro\" -Recurse -Force
+
+      - name: Zip the output folder
+        run: |
+          Compress-Archive -Path "dist\PUMA_Analytics_Pro" -DestinationPath "PUMA_Analytics_Pro_Windows.zip"
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PUMA_Analytics_Pro_Windows
+          path: PUMA_Analytics_Pro_Windows.zip
+          retention-days: 30
